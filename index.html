@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<!-- ... existing head and style sections remain the same ... -->
+
+<body>
+    <!-- ... existing header and form sections remain the same ... -->
+
+    <div class="thoughts-container">
+        <!-- Thoughts will be loaded dynamically -->
+    </div>
+
+    <script>
+        // Load existing thoughts when page loads
+        window.addEventListener('DOMContentLoaded', loadThoughts);
+
+        async function loadThoughts() {
+            try {
+                const response = await fetch('/api/thoughts');
+                const thoughts = await response.json();
+                const container = document.querySelector('.thoughts-container');
+                container.innerHTML = ''; // Clear container
+                
+                thoughts.forEach(thought => {
+                    const thoughtCard = createThoughtCard(thought);
+                    container.appendChild(thoughtCard);
+                });
+            } catch (error) {
+                console.error('Error loading thoughts:', error);
+            }
+        }
+
+        function createThoughtCard(thought) {
+            const thoughtCard = document.createElement('div');
+            thoughtCard.className = 'thought-card';
+            thoughtCard.innerHTML = `
+                <p><strong>${thought.name}</strong></p>
+                <p>${thought.text}</p>
+                <span class="timestamp">Posted on ${new Date(thought.timestamp).toLocaleDateString()} - ${new Date(thought.timestamp).toLocaleTimeString()}</span>
+            `;
+            return thoughtCard;
+        }
+
+        // Handle form submission
+        document.querySelector('.submit-btn').addEventListener('click', async function() {
+            const thoughtText = document.querySelector('.thought-input').value;
+            const nameText = document.querySelector('.name-input').value;
+            
+            if (thoughtText.trim() !== '' && nameText.trim() !== '') {
+                try {
+                    const response = await fetch('/api/thoughts', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: nameText,
+                            text: thoughtText,
+                            timestamp: new Date()
+                        })
+                    });
+
+                    if (response.ok) {
+                        // Clear inputs
+                        document.querySelector('.thought-input').value = '';
+                        document.querySelector('.name-input').value = '';
+                        // Reload thoughts
+                        loadThoughts();
+                    }
+                } catch (error) {
+                    console.error('Error posting thought:', error);
+                }
+            }
+        });
+    </script>
+</body>
+</html> 
