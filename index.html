@@ -1,76 +1,988 @@
 <!DOCTYPE html>
 <html lang="en">
-<!-- ... existing head and style sections remain the same ... -->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tea Time Thoughts</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rozha+One&family=Tiro+Devanagari+Hindi:ital@0;1&family=Yatra+One&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#4CAF50">
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --light-green: #E8F5E9;
+            --dark-green: #388E3C;
+            --header-green: rgba(67, 160, 71, 0.9);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --safe-area-inset-top: env(safe-area-inset-top);
+            --safe-area-inset-bottom: env(safe-area-inset-bottom);
+            --vh: 1vh;
+            --safe-area-top: env(safe-area-inset-top);
+            --safe-area-bottom: env(safe-area-inset-bottom);
+        }
 
-<body>
-    <!-- ... existing header and form sections remain the same ... -->
+        body {
+            font-family: 'Quicksand', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 10px;
+            background: linear-gradient(
+                135deg,
+                #E8F5E9 0%,
+                #C8E6C9 50%,
+                #E8F5E9 100%
+            );
+            min-height: 100vh;
+            -webkit-text-size-adjust: 100%;
+            color: #2C3E50;
+            margin: 0 env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            -webkit-text-size-adjust: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            min-height: calc(100 * var(--vh));
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior-y: contain;
+            position: relative;
+        }
 
-    <div class="thoughts-container">
-        <!-- Thoughts will be loaded dynamically -->
-    </div>
+        .header {
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+            margin: 0 -15px 15px;
+            border-radius: 0 0 20px 20px;
+        }
 
-    <script>
-        // Load existing thoughts when page loads
-        window.addEventListener('DOMContentLoaded', loadThoughts);
+        .header h1 {
+            font-family: 'Yatra One', cursive;
+            font-size: clamp(1.5rem, 5vw, 2.4rem);
+            margin: 0 0 10px;
+            color: #000;
+            text-shadow: 
+                2px 2px 0 rgba(255, 255, 255, 0.5),
+                -1px -1px 0 rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+            line-height: 1.3;
+            position: relative;
+            padding: 10px 0;
+        }
 
-        async function loadThoughts() {
-            try {
-                const response = await fetch('/api/thoughts');
-                const thoughts = await response.json();
-                const container = document.querySelector('.thoughts-container');
-                container.innerHTML = ''; // Clear container
-                
-                thoughts.forEach(thought => {
-                    const thoughtCard = createThoughtCard(thought);
-                    container.appendChild(thoughtCard);
-                });
-            } catch (error) {
-                console.error('Error loading thoughts:', error);
+        .header p {
+            font-family: 'Tiro Devanagari Hindi', serif;
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            line-height: 1.5;
+            margin: 0;
+            color: #2C3E50;
+            text-align: center;
+            padding: 0 10px;
+        }
+
+        .thought-form {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            padding: 15px;
+            margin: 10px;
+            width: calc(100% - 20px);
+            box-sizing: border-box;
+            padding: 15px;
+            margin: 10px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .thought-form h2 {
+            font-family: 'Rozha One', serif;
+            font-size: 1.5rem;
+            margin: 0 0 20px 0;
+            color: rgba(0, 0, 0, 0.8);
+            text-align: center;
+            position: relative;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .thought-form h2::before,
+        .thought-form h2::after {
+            content: '✿';
+            display: inline-block;
+            margin: 0 10px;
+            color: var(--primary-color);
+        }
+
+        .name-input, .thought-input {
+            width: calc(100% - 24px);
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: 'Tiro Devanagari Hindi', serif;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px !important;
+            box-sizing: border-box;
+            margin: 8px 0;
+        }
+
+        .thought-input {
+            height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+            min-height: 100px;
+            max-height: 200px;
+        }
+
+        .submit-btn {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-family: 'Rozha One', serif;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .submit-btn::before {
+            content: '✎';
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        .thought-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+            padding: 15px;
+            margin: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            word-wrap: break-word;
+        }
+
+        .thought-card::before {
+            content: '❝';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: rgba(76, 175, 80, 0.2);
+            font-family: 'Rozha One', serif;
+        }
+
+        .thought-card::after {
+            content: '❞';
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 24px;
+            color: rgba(76, 175, 80, 0.2);
+            font-family: 'Rozha One', serif;
+        }
+
+        .thought-card p {
+            margin: 8px 0;
+            line-height: 1.6;
+            font-size: 1.05rem;
+            font-family: 'Tiro Devanagari Hindi', serif;
+        }
+
+        .thought-card strong {
+            color: var(--primary-color);
+            font-family: 'Rozha One', serif;
+            font-size: 1.1rem;
+        }
+
+        .timestamp {
+            font-family: 'Tiro Devanagari Hindi', serif;
+            color: #757575;
+            font-size: 0.85rem;
+            display: block;
+            margin-top: 12px;
+            font-style: italic;
+            text-align: right;
+        }
+
+        /* Decorative corner flourishes */
+        .thought-card, .thought-form {
+            position: relative;
+        }
+
+        .thought-card::before,
+        .thought-form::before {
+            content: '✽';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            color: rgba(76, 175, 80, 0.2);
+            font-size: 20px;
+        }
+
+        .thought-card::after,
+        .thought-form::after {
+            content: '✽';
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            color: rgba(76, 175, 80, 0.2);
+            font-size: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .thought-form h2 {
+                font-size: 1.3rem;
             }
         }
 
-        function createThoughtCard(thought) {
-            const thoughtCard = document.createElement('div');
-            thoughtCard.className = 'thought-card';
-            thoughtCard.innerHTML = `
-                <p><strong>${thought.name}</strong></p>
-                <p>${thought.text}</p>
-                <span class="timestamp">Posted on ${new Date(thought.timestamp).toLocaleDateString()} - ${new Date(thought.timestamp).toLocaleTimeString()}</span>
-            `;
-            return thoughtCard;
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--primary-color);
+            font-family: 'Poppins', sans-serif;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
         }
 
-        // Handle form submission
-        document.querySelector('.submit-btn').addEventListener('click', async function() {
+        .submit-btn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at top right,
+                rgba(76, 175, 80, 0.1),
+                transparent 40%
+            );
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--dark-green);
+        }
+
+        /* Decorative borders */
+        .header h1::before,
+        .header h1::after {
+            content: '❀';
+            display: inline-block;
+            margin: 0 15px;
+            font-size: 1.8rem;
+            color: rgba(0, 0, 0, 0.7);
+            text-shadow: none;
+            vertical-align: middle;
+        }
+
+        /* Decorative underline */
+        .header h1 span {
+            position: relative;
+            display: inline-block;
+        }
+
+        .header h1 span::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -5px;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 0, 0, 0.8) 20%,
+                rgba(0, 0, 0, 0.8) 80%,
+                transparent
+            );
+        }
+
+        /* Decorative background pattern */
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                linear-gradient(45deg, 
+                    rgba(0, 0, 0, 0.05) 25%, 
+                    transparent 25%, 
+                    transparent 75%, 
+                    rgba(0, 0, 0, 0.05) 75%),
+                linear-gradient(45deg, 
+                    rgba(0, 0, 0, 0.05) 25%, 
+                    transparent 25%, 
+                    transparent 75%, 
+                    rgba(0, 0, 0, 0.05) 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            opacity: 0.3;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header h1::before,
+            .header h1::after {
+                font-size: 1.4rem;
+                margin: 0 10px;
+            }
+        }
+
+        /* Optional: Add animation on load */
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .header h1 {
+            animation: fadeInScale 0.5s ease-out forwards;
+        }
+
+        .thought-input::placeholder {
+            font-family: 'Tiro Devanagari Hindi', serif;
+            font-style: italic;
+            color: #666;
+        }
+
+        /* Decorative corner elements */
+        .thought-form::before,
+        .thought-form::after {
+            content: '❀';
+            position: absolute;
+            font-size: 24px;
+            color: rgba(76, 175, 80, 0.2);
+        }
+
+        .thought-form::before {
+            top: 10px;
+            left: 10px;
+        }
+
+        .thought-form::after {
+            bottom: 10px;
+            right: 10px;
+        }
+
+        /* Add a decorative border */
+        .thought-form {
+            border: 1px solid rgba(76, 175, 80, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thought-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, 
+                transparent,
+                rgba(76, 175, 80, 0.5),
+                transparent
+            );
+        }
+
+        /* Updated Submit button styling */
+        .submit-btn {
+            background: #000000;
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-family: 'Rozha One', serif;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Hover effect */
+        .submit-btn:hover {
+            background: #222222;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Active/Click effect */
+        .submit-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Optional: Add a subtle gradient overlay */
+        .submit-btn::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                45deg,
+                rgba(255, 255, 255, 0.1),
+                transparent 60%
+            );
+        }
+
+        /* Pen icon before text */
+        .submit-btn::before {
+            content: '✎';
+            margin-right: 8px;
+            font-size: 20px;
+        }
+
+        /* Disabled state */
+        .submit-btn:disabled {
+            background: #666666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Glass effect for input fields */
+        .name-input,
+        .thought-input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border-radius: 8px;
+            padding: 12px 15px;
+            color: #000;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        /* Input field hover and focus states */
+        .name-input:hover,
+        .thought-input:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .name-input:focus,
+        .thought-input:focus {
+            background: rgba(255, 255, 255, 0.35);
+            border-color: rgba(0, 0, 0, 0.2);
+            outline: none;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Placeholder text */
+        ::placeholder {
+            color: rgba(0, 0, 0, 0.6);
+        }
+
+        /* Glass effect for posted thoughts */
+        .thought-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 
+                0 8px 32px 0 rgba(31, 38, 135, 0.15),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Hover effect for thought cards */
+        .thought-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 12px 40px 0 rgba(31, 38, 135, 0.2),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        /* Optional: Add light beam effect */
+        .thought-form::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.1) 0%,
+                transparent 70%
+            );
+            transform: rotate(45deg);
+            pointer-events: none;
+        }
+
+        /* Decorative elements */
+        .thought-form h2 {
+            color: rgba(0, 0, 0, 0.8);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Add shimmer effect to borders */
+        @keyframes borderShimmer {
+            0% { border-color: rgba(255, 255, 255, 0.3); }
+            50% { border-color: rgba(255, 255, 255, 0.5); }
+            100% { border-color: rgba(255, 255, 255, 0.3); }
+        }
+
+        .thought-form {
+            animation: borderShimmer 3s infinite;
+        }
+
+        /* Name section styling */
+        .name-section {
+            margin-bottom: 20px;
+        }
+
+        /* Anonymous toggle styling */
+        .anonymous-toggle {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 5px 0;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 46px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Black theme slider */
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e0e0e0;  /* Light gray when off */
+            transition: .3s;
+            border-radius: 24px;
+            border: 1px solid #d0d0d0;
+            box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "😊";  /* Changed emoji for better visibility on black */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 2px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+            box-shadow: 0 0 4px rgba(0,0,0,0.1);
+            font-size: 12px;
+        }
+
+        /* Black background when toggled */
+        input:checked + .slider {
+            background-color: #000000;
+            border-color: #000000;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            content: "✨";  /* Changed to sparkle for better visibility */
+            background-color: #ffffff;
+        }
+
+        /* Hover effect */
+        .slider:hover {
+            box-shadow: 0 0 8px rgba(0,0,0,0.2);
+        }
+
+        .toggle-label {
+            font-family: 'Tiro Devanagari Hindi', serif;
+            font-size: 0.9rem;
+            color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Optional: Add subtle transition effect */
+        @keyframes toggleOn {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        input:checked + .slider:before {
+            animation: toggleOn 0.3s ease-out;
+        }
+
+        /* Mobile-First Responsive Design */
+        @media screen and (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+        }
+
+        /* Handle Different Screen Sizes */
+        @media screen and (max-width: 480px) {
+            .thought-card {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+
+        /* iOS Specific Fixes */
+        @supports (-webkit-touch-callout: none) {
+            .thought-input {
+                font-size: 16px;
+            }
+            
+            input[type="text"] {
+                font-size: 16px;
+            }
+        }
+
+        /* Responsive Typography */
+        @media screen and (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .header p {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+        }
+
+        /* Handle Different Screen Sizes */
+        @media screen and (max-width: 480px) {
+            .thought-card {
+                margin: 10px;
+                padding: 15px;
+            }
+        }
+
+        /* Enhanced Mobile-First Responsive Design */
+        /* Container adjustments for mobile */
+        .container {
+            padding: calc(10px + var(--safe-area-top)) 15px calc(10px + var(--safe-area-bottom));
+            max-width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* Touch target sizes */
+        button, 
+        .switch {
+            min-height: 44px; /* iOS minimum touch target size */
+            min-width: 44px;
+        }
+
+        /* Prevent text selection while scrolling */
+        .thought-card {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Active states for touch devices */
+        @media (hover: none) {
+            .submit-btn:active {
+                transform: scale(0.98);
+            }
+            
+            .thought-card:active {
+                opacity: 0.9;
+            }
+        }
+
+        /* Device-specific adjustments */
+        /* iOS Notch handling */
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .container {
+                padding-top: env(safe-area-inset-top);
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+
+        /* Android specific */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                overscroll-behavior-y: none;
+            }
+        }
+
+        /* Landscape mode optimization */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            .header {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: clamp(1.2rem, 4vw, 1.8rem);
+            }
+            
+            .thought-input {
+                min-height: 80px;
+            }
+        }
+
+        /* Loading states */
+        .loading-indicator {
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1><span>अगले मुसाफिर के लिए संदेश</span></h1>
+        <p>ये बेंच एक कड़ी है, जो दो अनजान लोगों को जोड़ती है। अभी कोई आपके लिए अपने दिल का एक पन्ना छोड़ गया है। अब आप भी अगले साथी के लिए कुछ लिख जाइए। चाय की चुस्कियों के बीच, एक अनजान दोस्त से दूसरे तक, शब्दों का ये सफर जारी रहे। ✨</p>
+    </div>
+
+    <div class="thought-form">
+        <h2>✿ Leave Your Mark ✿</h2>
+        
+        <!-- Name input with anonymous toggle -->
+        <div class="name-section">
+            <div class="anonymous-toggle">
+                <label class="switch">
+                    <input type="checkbox" id="anonymousToggle">
+                    <span class="slider"></span>
+                </label>
+                <span class="toggle-label">रहें गुमनाम</span>
+            </div>
+            <input type="text" class="name-input" id="nameInput" placeholder="आपका नाम... (वैकल्पिक)">
+        </div>
+
+        <textarea class="thought-input" placeholder="कुछ लिख जाओ, किसी की मुस्कुराहट का सबब बन जाओ..."></textarea>
+        <button class="submit-btn">Share Thought</button>
+    </div>
+
+    <div class="messages-container">
+        <!-- Messages will be inserted here -->
+    </div>
+
+    <template id="message-template">
+        <div class="thought-card">
+            <p class="message-text"></p>
+            <div class="message-footer">
+                <span class="author"></span>
+                <span class="timestamp"></span>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const anonymousToggle = document.getElementById('anonymousToggle');
+            const nameInput = document.getElementById('nameInput');
+
+            anonymousToggle.addEventListener('change', function() {
+                if (this.checked) {
+                    nameInput.value = '';
+                    nameInput.disabled = true;
+                    nameInput.classList.add('disabled');
+                    nameInput.placeholder = 'गुमनाम ✨';
+                } else {
+                    nameInput.disabled = false;
+                    nameInput.classList.remove('disabled');
+                    nameInput.placeholder = 'आपका नाम... (वैकल्पिक)';
+                }
+            });
+        });
+
+        // Basic JavaScript to handle form submission
+        document.querySelector('.submit-btn').addEventListener('click', function() {
             const thoughtText = document.querySelector('.thought-input').value;
             const nameText = document.querySelector('.name-input').value;
             
             if (thoughtText.trim() !== '' && nameText.trim() !== '') {
-                try {
-                    const response = await fetch('/api/thoughts', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            name: nameText,
-                            text: thoughtText,
-                            timestamp: new Date()
-                        })
-                    });
-
-                    if (response.ok) {
-                        // Clear inputs
-                        document.querySelector('.thought-input').value = '';
-                        document.querySelector('.name-input').value = '';
-                        // Reload thoughts
-                        loadThoughts();
-                    }
-                } catch (error) {
-                    console.error('Error posting thought:', error);
-                }
+                const thoughtCard = document.createElement('div');
+                thoughtCard.className = 'thought-card';
+                
+                const now = new Date();
+                thoughtCard.innerHTML = `
+                    <p><strong>${nameText}</strong></p>
+                    <p>${thoughtText}</p>
+                    <span class="timestamp">Posted on ${now.toLocaleDateString()} - ${now.toLocaleTimeString()}</span>
+                `;
+                
+                document.querySelector('.thoughts-container').prepend(thoughtCard);
+                document.querySelector('.thought-input').value = '';
+                document.querySelector('.name-input').value = '';
             }
+        });
+
+        function loadMessages() {
+            messagesRef
+                .orderByChild('timestamp')
+                .on('value', (snapshot) => {
+                    const messages = [];
+                    snapshot.forEach((childSnapshot) => {
+                        messages.push({
+                            id: childSnapshot.key,
+                            ...childSnapshot.val()
+                        });
+                    });
+                    displayMessages(messages);
+                });
+        }
+
+        // Enable offline persistence
+        firebase.database().enablePersistence()
+            .catch((err) => {
+                if (err.code === 'failed-precondition') {
+                    // Multiple tabs open
+                    console.log('Persistence can only be enabled in one tab at a time.');
+                } else if (err.code === 'unimplemented') {
+                    // Browser doesn't support persistence
+                    console.log('The current browser does not support persistence.');
+                }
+            });
+
+        // Mobile-specific JavaScript enhancements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Fix viewport height for mobile browsers
+            const vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+            // Recheck on resize and orientation change
+            window.addEventListener('resize', () => {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            });
+
+            // Prevent elastic scrolling on iOS
+            document.body.addEventListener('touchmove', function(e) {
+                if (this.scrollTop === 0) {
+                    this.scrollTop = 1;
+                } else if (this.scrollHeight === this.scrollTop + this.offsetHeight) {
+                    this.scrollTop -= 1;
+                }
+            }, false);
+
+            // Handle keyboard appearance on iOS
+            const inputs = document.querySelectorAll('input, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    setTimeout(() => {
+                        window.scrollTo(0, input.offsetTop - 15);
+                    }, 300);
+                });
+            });
         });
     </script>
 </body>
-</html> 
+</html>
