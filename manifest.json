@@ -1,0 +1,16 @@
+{
+  "name": "Tea Time Thoughts",
+  "short_name": "TeaThoughts",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f5f5f5",
+  "theme_color": "#8B4513",
+  "description": "Share your morning musings from the college canteen",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+} 
